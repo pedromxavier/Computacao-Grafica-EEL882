@@ -1,0 +1,83 @@
+
+
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Grandma's Heavy Metal Festival Journal</title>
+    <style>
+    /* Tooltip container */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    /* Tooltip text */
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 100px;
+      background-color: black;
+      color: #fff;
+      text-align: center;
+      padding: 5px 0;
+      border-radius: 6px;
+      position: absolute;
+      z-index: 1;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+    }
+    </style>
+
+    <meta charset="utf-8"/>
+    <script src="source/p5.js"></script>
+    <script src="source/script.js"></script>
+  </head>
+
+  <body>
+    <h1>Computa&ccedil;&atilde;o Gr&aacute;fica [EEL882]</h1>
+    <h2>Pedro Maciel Xavier [DRE: 116023847]
+    <h3>Trabalho II - Ray casting em 2D</h3>
+
+    <form action=""><div style="margin:0;padding:0">
+      <div>
+
+        <!-- Shape drawing Mode -->
+        <div class="tooltip">
+          <span class="tooltiptext">Criar Formas</span>
+          <img src="images/shapes.png" alt="Create something" width="100" height="100" onclick="set_mode(shape_mode)">
+          <!--<input type="image" src="../Trabalho 1/images/shapes.png" alt="Create Shapes" width="100" height="100" onclick="set_mode(shape_mode)">-->
+        </div>
+
+        <!-- Ray drawing Mode-->
+        <div class="tooltip">
+          <span class="tooltiptext">Criar Raios</span>
+          <img src="images/rays.png" alt=alt="Create Rays" width="100" height="100" onclick="set_mode(ray_mode)">
+          <!--<input type="image" src="../Trabalho 1/images/shapes.png" alt="Create Rays" width="100" height="100" onclick="set_mode(ray_mode)">-->
+        </div>
+
+        <!-- Editing Mode-->
+        <div class="tooltip">
+          <span class="tooltiptext">Modo Edi&ccedil;&atilde;o</span>
+          <img src="images/edit.png" alt="Edit Mode" width="100" height="100" onclick="set_mode(edit_mode)">
+          <!--<input type="image" src="../Trabalho 1/images/shapes.png" alt="Edit Mode" width="100" height="100" onclick="set_mode(edit_mode)">-->
+        </div>
+
+        <!-- Toggle Debug Mode-->
+        <div class="tooltip">
+          <span class="tooltiptext">Modo <i>Debug</i></span>
+          <img id="debug_img" src="images/debug2.png" alt="Debug Mode" width="100" height="100" onclick="toggle_debug_mode(this)">
+          <!--<input type="image" src="../Trabalho 1/images/shapes.png" alt="Save Picture" width="100" height="100" onclick="_save_('art')">-->
+        </div>
+
+        <!-- Save Picture-->
+        <div class="tooltip">
+          <span class="tooltiptext">Salvar sua Arte</span>
+          <img src="images/save.png" alt="Save Picture" width="100" height="100" onclick="_save_('art')">
+          <!--<input type="image" src="../Trabalho 1/images/shapes.png" alt="Save Picture" width="100" height="100" onclick="_save_('art')">-->
+        </div>
+      </div>
+    </form>
+  </body>
+</html>
