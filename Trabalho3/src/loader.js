@@ -26,50 +26,50 @@ const G = 6.674083E-11;
 const PI = 3.141592653;
 
 const audios = {
-    universe : new Audio("../audio/pavene.mp3")
+    universe : new Audio("../Trabalho3/audio/pavene.mp3")
 };
 
 const cage_audios = {
-    universe : new Audio("../audio/sopro.mp3")
+    universe : new Audio("../Trabalho3/audio/sopro.mp3")
 };
 
 const textures = {
     // Plantes
-    mercury : loader.load("../images/mercury.png"),
-	venus   : loader.load("../images/venus.png"),
-	earth   : loader.load("../images/earth.png"),
-	mars    : loader.load("../images/mars.png"),
-	jupiter : loader.load("../images/jupiter.png"),
-    saturn  : loader.load("../images/saturn.png"),
-    uranus  : loader.load("../images/uranus.png"),
-	neptune : loader.load("../images/neptune.png"),
-	pluto   : loader.load("../images/pluto.png"),
+    mercury : loader.load("../Trabalho3/images/mercury.png"),
+	venus   : loader.load("../Trabalho3/images/venus.png"),
+	earth   : loader.load("../Trabalho3/images/earth.png"),
+	mars    : loader.load("../Trabalho3/images/mars.png"),
+	jupiter : loader.load("../Trabalho3/images/jupiter.png"),
+    saturn  : loader.load("../Trabalho3/images/saturn.png"),
+    uranus  : loader.load("../Trabalho3/images/uranus.png"),
+	neptune : loader.load("../Trabalho3/images/neptune.png"),
+	pluto   : loader.load("../Trabalho3/images/pluto.png"),
 
     // Universe
-    universe : loader.load("../images/universe.png")
+    universe : loader.load("../Trabalho3/images/universe.png")
 };
 
 const ring_textures = {
     // Rings
-    saturn : loader.load("../images/saturn_ring.png"),
-    uranus : loader.load("../images/uranus_ring.png")
+    saturn : loader.load("../Trabalho3/images/saturn_ring.png"),
+    uranus : loader.load("../Trabalho3/images/uranus_ring.png")
 };
 
 const cage_textures = {
-    mercury : loader.load("../images/cage_earth.png"),
-	venus   : loader.load("../images/cage_earth.png"),
-	earth   : loader.load("../images/cage_earth.png"),
-	mars    : loader.load("../images/cage_earth.png"),
-	jupiter : loader.load("../images/cage_earth.png"),
-    saturn  : loader.load("../images/cage_earth.png"),
-    uranus  : loader.load("../images/cage_earth.png"),
-	neptune : loader.load("../images/cage_earth.png"),
-	pluto   : loader.load("../images/cage_earth.png"),
+    mercury : loader.load("../Trabalho3/images/cage_earth.png"),
+	venus   : loader.load("../Trabalho3/images/cage_earth.png"),
+	earth   : loader.load("../Trabalho3/images/cage_earth.png"),
+	mars    : loader.load("../Trabalho3/images/cage_earth.png"),
+	jupiter : loader.load("../Trabalho3/images/cage_earth.png"),
+    saturn  : loader.load("../Trabalho3/images/cage_earth.png"),
+    uranus  : loader.load("../Trabalho3/images/cage_earth.png"),
+	neptune : loader.load("../Trabalho3/images/cage_earth.png"),
+	pluto   : loader.load("../Trabalho3/images/cage_earth.png"),
 
-    rings   : loader.load("../images/rainbow.png"),
+    rings   : loader.load("../Trabalho3/images/rainbow.png"),
 
     // Universe
-    universe : loader.load("../images/universe.png")
+    universe : loader.load("../Trabalho3/images/universe.png")
 };
 
 var universe = new Universe(FAR, 'universe');
