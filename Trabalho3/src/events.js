@@ -6,8 +6,11 @@ document.addEventListener('mousemove', MouseMove, false );
 
 document.addEventListener('contextmenu', function(event){event.preventDefault();}, false );
 
-// window.addEventListener('resize', Resize, false );
+window.addEventListener('resize', Resize, false );
 
+
+const MAXZOOM = 1E+3;
+const MINZOOM = 1E-3;
 
 var mouse = new THREE.Vector2();
 var last_mouse = new THREE.Vector2();
@@ -26,7 +29,7 @@ function mouse_coords(x, y){
 
 function Wheel(event){
 	let zoom = (camera.zoom / (2 ** (event.deltaY/30.0)));
-	if (zoom <= 1E+12 && zoom >= 1E-12){
+	if (zoom <= MAXZOOM && zoom >= MINZOOM){
 		camera.zoom = zoom;
 		camera.updateProjectionMatrix();
 	}
@@ -96,9 +99,10 @@ function MouseMove(event){
 }
 
 function Resize(event){
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize( window.innerWidth, window.innerHeight );
 	width = window.innerWidth;
 	height = window.innerHeight;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+
 }
