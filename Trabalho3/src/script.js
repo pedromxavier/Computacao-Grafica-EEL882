@@ -25,4 +25,8 @@ function render(){
 	renderer.render(scene, camera);
 }
 
-animate();
+if (WEBGL.isWebGLAvailable()) {
+	animate();
+} else {
+	document.body.appendChild(WEBGL.getWebGLErrorMessage());
+}
