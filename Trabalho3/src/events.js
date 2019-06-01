@@ -48,7 +48,6 @@ function MouseDown(event){
         case 1:
             if (INTERSECTED){
                 GRABBED = INTERSECTED.body;
-
                 GRABBED.grab(m.x, m.y);
             }
             break;
@@ -59,7 +58,6 @@ function MouseDown(event){
 			else{
 				RGRABBED = universe;
 			}
-			RGRABBED.wrap();
 			RGRABBED.rgrab(m.x, m.y);
             break;
     }
@@ -69,10 +67,11 @@ function MouseUp(event){
     switch(event.buttons){
         case 0:
 			if (GRABBED){
+				GRABBED.ungrab();
             	GRABBED = null;
 			}
 			else if (RGRABBED){
-				RGRABBED.unwrap();
+				RGRABBED.rungrab();
 				RGRABBED = null;
 			}
             break;

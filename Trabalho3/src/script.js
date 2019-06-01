@@ -1,27 +1,28 @@
-var INTERSECTED = null;
-var GRABBED = null;
-var RGRABBED = null;
+function find_intersections(){
+	raycaster.setFromCamera(mouse, camera);
+	let intersects = raycaster.intersectObjects(scene.children);
 
-function animate() {
-	requestAnimationFrame(animate);
-
-	// find intersections
-	raycaster.setFromCamera( mouse, camera );
-	let intersects = raycaster.intersectObjects(universe.group.children);
-
-	if ( intersects.length > 0 ) {
-		if ( INTERSECTED != intersects[ 0 ].object) {
-			INTERSECTED = intersects[ 0 ].object;
+	if (intersects.length > 0) {
+		let obj = intersects[0].object;
+		if (INTERSECTED != obj) {
+			INTERSECTED = obj;
 		}
 	} else {
 		INTERSECTED = null;
 	}
+}
+
+function animate() {
+	requestAnimationFrame(animate);
+
+	find_intersections();
+
 	render();
 }
 
 function render(){
 	renderer.clear();
-	renderer.render( scene, camera );
+	renderer.render(scene, camera);
 }
 
 animate();
