@@ -31,6 +31,8 @@ class Universe{
         this.wrapping = new WrappingSphere(1.0);
         this.wrapping.body = this;
 
+        this.rwrap = new WrappingSphere(30.0, true);
+
         this.pos = this.group.position;
 		this.rot = this.group.quaternion;
 
@@ -145,13 +147,16 @@ class Universe{
 
 
     wrap(){
-      this.wrapping.setpos(this.pos);
+      this.wrapping.setpos(this.get_center());
+      this.rwrap.setpos(this.get_center());
       this.wrapping.setr(this.get_sphere_radius());
   	  this.group.add(this.wrapping.mesh);
+      this.group.add(this.rwrap);
     }
 
     unwrap(){
   	  this.group.remove(this.wrapping.mesh);
+      this.group.remove(this.rwrap);
     }
     // ROTATING YEAHH
 
@@ -195,10 +200,11 @@ class Universe{
 }
 
 class WrappingSphere{
-	constructor(r){
+	constructor(r, red=false){
+        this.color = red ? 0xff0000:0x777777;
 		this.r = r;
 		this.geometry = new THREE.SphereGeometry(this.r, SPHERE_DIVS, SPHERE_DIVS);
-		this.material = new THREE.MeshBasicMaterial({transparent: true, opacity: 0.5, color: 0x777777})
+		this.material = new THREE.MeshBasicMaterial({transparent: true, opacity: 0.5, color: this.color})
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
 
         this.pos = this.mesh.position;
