@@ -31,7 +31,7 @@ class Universe{
         this.wrapping = new WrappingSphere(1.0);
         this.wrapping.body = this;
 
-        this.rwrap = new WrappingSphere(30.0, true);
+        this.rwrap = new WrappingSphere(300.0, 1);
 
         this.pos = this.group.position;
 		this.rot = this.group.quaternion;
