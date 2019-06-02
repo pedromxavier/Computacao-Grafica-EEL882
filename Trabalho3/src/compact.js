@@ -94,6 +94,7 @@ class Universe{
 
 		for(let i=0;i<this.bodies.length;i++){
 			let obj = this.bodies[i]
+            
 			obj.pos.sub(this.pos);
 
 			scene.remove(obj.mesh);
@@ -144,7 +145,7 @@ class Universe{
 
     wrap(){
         this.wrapping.setpos(this.get_center());
-        this.wrapping.setr(this.get_sphere_radius());
+        this.wrapping.setr(this.get_sphere_radius()*1.1);
 
         scene.add(this.wrapping.mesh);
     }
@@ -436,7 +437,9 @@ var height = window.innerHeight;
 const NEAR = 0;
 const FAR = 10000;
 
-var camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, NEAR, FAR);
+const CAM = 2;
+var camera = new THREE.OrthographicCamera( width/(-CAM), width/CAM, height/CAM, height/(-CAM), NEAR, FAR);
+
 
 var loader = new THREE.TextureLoader();
 
@@ -563,12 +566,12 @@ function mouse_coords(x, y){
 }
 
 function Wheel(event){
-	let step = 1;
-	if (event.deltaY > 0) step = + ZOOMSTEP;
-	if (event.deltaY < 0) step = - ZOOMSTEP;
-	console.log(event.deltaY);
-	let zoom = (camera.zoom / step);
-	if (zoom <= MAXZOOM && zoom >= MINZOOM){
+	let zoom = camera.zoom;
+
+	if (event.deltaY > 0) {zoom /= ZOOMSTEP;}
+	if (event.deltaY < 0) {zoom *= ZOOMSTEP;}
+
+	if (zoom != camera.zoom && (zoom <= MAXZOOM && zoom >= MINZOOM)){
 		camera.zoom = zoom;
 		camera.updateProjectionMatrix();
 	}
@@ -640,10 +643,15 @@ function MouseMove(event){
 function Resize(event){
 	width = window.innerWidth;
 	height = window.innerHeight;
-    //camera.aspect = width / height;
-//    camera.updateProjectionMatrix();
-    renderer.setSize(width, height);
 
+	renderer.setSize(width, height);
+
+	camera.left   = -width/CAM;
+	camera.right  =  width/CAM;
+	camera.top    =  height/CAM;
+	camera.bottom = -height/CAM;
+
+	camera.updateProjectionMatrix();
 }
 //script.js
 function find_intersections(){
