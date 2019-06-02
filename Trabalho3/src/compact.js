@@ -1,221 +1,3 @@
-//events.js
-document.addEventListener('keydown', Keyboard, false);
-
-// Mouse Events
-document.addEventListener('mousedown', MouseDown, false);
-document.addEventListener('mouseup', MouseUp, false);
-document.addEventListener('wheel', Wheel, false);
-document.addEventListener('mousemove', MouseMove, false );
-
-// Touch Events
-
-window.addEventListener('contextmenu', function(event){event.preventDefault();}, false );
-window.addEventListener('resize', Resize, false );
-
-
-const MAXZOOM = 1E+3;
-const MINZOOM = 1E-3;
-const ZOOMSTEP = 1.1;
-
-var mouse = new THREE.Vector2();
-var last_mouse = new THREE.Vector2();
-
-var mouse_delta = new THREE.Vector2();
-
-function mouse_coords(x, y){
-	let w = width;
-	let h = height;
-
-	let m = Vec2(x - (w/2), -(y - (h/2)));
-	m.x /= camera.zoom;
-	m.y /= camera.zoom;
-	return m;
-}
-
-function Wheel(event){
-	let step = 1;
-	if (event.deltaY > 0) step = + ZOOMSTEP;
-	if (event.deltaY < 0) step = - ZOOMSTEP;
-
-	let zoom = (camera.zoom / step);
-	if (zoom <= MAXZOOM && zoom >= MINZOOM){
-		camera.zoom = zoom;
-		camera.updateProjectionMatrix();
-	}
-}
-
-function Keyboard(event){
-	switch(event.key){
-		case " ":
-			universe.change_texture();
-			break;
-		default:
-			break;
-	}
-}
-
-function MouseDown(event){
-    let m = mouse_coords(event.clientX, event.clientY);
-	switch(event.buttons){
-        case 1:
-            if (INTERSECTED){
-                GRABBED = INTERSECTED.body;
-                GRABBED.grab(m.x, m.y);
-            }
-            break;
-        case 2:
-			if (INTERSECTED){
-				RGRABBED = INTERSECTED.body;
-			}
-			else{
-				RGRABBED = universe;
-			}
-			RGRABBED.rgrab(m.x, m.y);
-            break;
-    }
-}
-
-function MouseUp(event){
-    switch(event.buttons){
-        case 0:
-			if (GRABBED){
-				GRABBED.ungrab();
-            	GRABBED = null;
-			}
-			else if (RGRABBED){
-				RGRABBED.rungrab();
-				RGRABBED = null;
-			}
-            break;
-    }
-}
-
-function MouseMove(event){
-    event.preventDefault();
-
-    mouse.x =   ( event.clientX / width  ) * 2 - 1;
-	mouse.y = - ( event.clientY / height ) * 2 + 1;
-
-	let m = mouse_coords(event.clientX, event.clientY);
-
-    if(GRABBED){
-        // Move grabbed
-        GRABBED.moveto(m.x, m.y);
-    }
-	else if (RGRABBED){
-		RGRABBED.rotateto(m.x, m.y);
-	}
-}
-
-function Resize(event){
-	width = window.innerWidth;
-	height = window.innerHeight;
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(width, height);
-
-}
-//loader.js
-var scene = new THREE.Scene();
-
-var width = window.innerWidth;
-var height = window.innerHeight;
-
-const NEAR = 0;
-const FAR = 10000;
-
-var camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, NEAR, FAR);
-
-var loader = new THREE.TextureLoader();
-
-var raycaster = new THREE.Raycaster();
-
-var listener = new THREE.AudioListener();
-
-var renderer = new THREE.WebGLRenderer();
-renderer.setSize(width, height);
-document.body.appendChild(renderer.domElement);
-
-const SPHERE_DIVS = 32;
-const RING_DIVS = 32;
-
-var INTERSECTED = null;
-var GRABBED     = null;
-var RGRABBED    = null;
-
-const audios = {
-    universe : new Audio("../Trabalho3/audio/pavene.mp3")
-};
-
-const cage_audios = {
-    universe : new Audio("../Trabalho3/audio/sopro.mp3")
-};
-
-const textures = {
-    // Plantes
-    mercury : loader.load("../Trabalho3/images/mercury.png"),
-	venus   : loader.load("../Trabalho3/images/venus.png"),
-	earth   : loader.load("../Trabalho3/images/earth.png"),
-	mars    : loader.load("../Trabalho3/images/mars.png"),
-	jupiter : loader.load("../Trabalho3/images/jupiter.png"),
-    saturn  : loader.load("../Trabalho3/images/saturn.png"),
-    uranus  : loader.load("../Trabalho3/images/uranus.png"),
-	neptune : loader.load("../Trabalho3/images/neptune.png"),
-	pluto   : loader.load("../Trabalho3/images/pluto.png"),
-
-    // Universe
-    universe : loader.load("../Trabalho3/images/universe.png")
-};
-
-const ring_textures = {
-    // Rings
-    saturn : loader.load("../Trabalho3/images/saturn_ring.png"),
-    uranus : loader.load("../Trabalho3/images/uranus_ring.png")
-};
-
-const cage_textures = {
-    mercury : loader.load("../Trabalho3/images/cage_earth.png"),
-	venus   : loader.load("../Trabalho3/images/cage_earth.png"),
-	earth   : loader.load("../Trabalho3/images/cage_earth.png"),
-	mars    : loader.load("../Trabalho3/images/cage_earth.png"),
-	jupiter : loader.load("../Trabalho3/images/cage_earth.png"),
-    saturn  : loader.load("../Trabalho3/images/cage_earth.png"),
-    uranus  : loader.load("../Trabalho3/images/cage_earth.png"),
-	neptune : loader.load("../Trabalho3/images/cage_earth.png"),
-	pluto   : loader.load("../Trabalho3/images/cage_earth.png"),
-
-    rings   : loader.load("../Trabalho3/images/rainbow.png"),
-
-    // Universe
-    universe : loader.load("../Trabalho3/images/universe.png")
-};
-
-var universe = new Universe(FAR, 'universe');
-
-const rings = {
-//  name   : new Ring(inner, outer,   'name')
-    saturn : new Ring(  140,   202, 'saturn'),
-    uranus : new Ring(   42,    70, 'uranus')
-};
-
-const planets = {
-//  name    : new Planet(universe,   r,    'name', Vec3(position),  ring),
-    mercury : new Planet(universe,   4, 'mercury', Vec3(   0,0,0), false),
-	venus   : new Planet(universe,   9,   'venus', Vec3(  20,0,0), false),
-	earth   : new Planet(universe,  10,   'earth', Vec3(  50,0,0), false),
-	mars    : new Planet(universe,   5,    'mars', Vec3(  80,0,0), false),
-	jupiter : new Planet(universe, 112, 'jupiter', Vec3( 240,0,0), false),
-    saturn  : new Planet(universe,  90,  'saturn', Vec3( 600,0,0),  true),
-    uranus  : new Planet(universe,  40,  'uranus', Vec3( 930,0,0),  true),
-	neptune : new Planet(universe,  38, 'neptune', Vec3(1080,0,0), false),
-	pluto   : new Planet(universe,   2,   'pluto', Vec3(1160,0,0), false)
-};
-
-camera.position.x = 0;
-camera.position.y = 0;
-camera.position.z = 2000;
-
-scene.add(camera);
 //objects.js
 function Vec2(x, y){
     return new THREE.Vector2(x, y);
@@ -632,6 +414,224 @@ class Planet{
 	translateV2(v){
 	  this.pos.add(Vec3(v.x, v.y, 0));
 	}
+}
+//loader.js
+var scene = new THREE.Scene();
+
+var width = window.innerWidth;
+var height = window.innerHeight;
+
+const NEAR = 0;
+const FAR = 10000;
+
+var camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, NEAR, FAR);
+
+var loader = new THREE.TextureLoader();
+
+var raycaster = new THREE.Raycaster();
+
+var listener = new THREE.AudioListener();
+
+var renderer = new THREE.WebGLRenderer();
+renderer.setSize(width, height);
+document.body.appendChild(renderer.domElement);
+
+const SPHERE_DIVS = 32;
+const RING_DIVS = 32;
+
+var INTERSECTED = null;
+var GRABBED     = null;
+var RGRABBED    = null;
+
+const audios = {
+    universe : new Audio("../Trabalho3/audio/pavene.mp3")
+};
+
+const cage_audios = {
+    universe : new Audio("../Trabalho3/audio/sopro.mp3")
+};
+
+const textures = {
+    // Plantes
+    mercury : loader.load("../Trabalho3/images/mercury.png"),
+	venus   : loader.load("../Trabalho3/images/venus.png"),
+	earth   : loader.load("../Trabalho3/images/earth.png"),
+	mars    : loader.load("../Trabalho3/images/mars.png"),
+	jupiter : loader.load("../Trabalho3/images/jupiter.png"),
+    saturn  : loader.load("../Trabalho3/images/saturn.png"),
+    uranus  : loader.load("../Trabalho3/images/uranus.png"),
+	neptune : loader.load("../Trabalho3/images/neptune.png"),
+	pluto   : loader.load("../Trabalho3/images/pluto.png"),
+
+    // Universe
+    universe : loader.load("../Trabalho3/images/universe.png")
+};
+
+const ring_textures = {
+    // Rings
+    saturn : loader.load("../Trabalho3/images/saturn_ring.png"),
+    uranus : loader.load("../Trabalho3/images/uranus_ring.png")
+};
+
+const cage_textures = {
+    mercury : loader.load("../Trabalho3/images/cage_earth.png"),
+	venus   : loader.load("../Trabalho3/images/cage_earth.png"),
+	earth   : loader.load("../Trabalho3/images/cage_earth.png"),
+	mars    : loader.load("../Trabalho3/images/cage_earth.png"),
+	jupiter : loader.load("../Trabalho3/images/cage_earth.png"),
+    saturn  : loader.load("../Trabalho3/images/cage_earth.png"),
+    uranus  : loader.load("../Trabalho3/images/cage_earth.png"),
+	neptune : loader.load("../Trabalho3/images/cage_earth.png"),
+	pluto   : loader.load("../Trabalho3/images/cage_earth.png"),
+
+    rings   : loader.load("../Trabalho3/images/rainbow.png"),
+
+    // Universe
+    universe : loader.load("../Trabalho3/images/universe.png")
+};
+
+var universe = new Universe(FAR, 'universe');
+
+const rings = {
+//  name   : new Ring(inner, outer,   'name')
+    saturn : new Ring(  140,   202, 'saturn'),
+    uranus : new Ring(   42,    70, 'uranus')
+};
+
+const planets = {
+//  name    : new Planet(universe,   r,    'name', Vec3(position),  ring),
+    mercury : new Planet(universe,   4, 'mercury', Vec3(   0,0,0), false),
+	venus   : new Planet(universe,   9,   'venus', Vec3(  20,0,0), false),
+	earth   : new Planet(universe,  10,   'earth', Vec3(  50,0,0), false),
+	mars    : new Planet(universe,   5,    'mars', Vec3(  80,0,0), false),
+	jupiter : new Planet(universe, 112, 'jupiter', Vec3( 240,0,0), false),
+    saturn  : new Planet(universe,  90,  'saturn', Vec3( 600,0,0),  true),
+    uranus  : new Planet(universe,  40,  'uranus', Vec3( 930,0,0),  true),
+	neptune : new Planet(universe,  38, 'neptune', Vec3(1080,0,0), false),
+	pluto   : new Planet(universe,   2,   'pluto', Vec3(1160,0,0), false)
+};
+
+camera.position.x = 0;
+camera.position.y = 0;
+camera.position.z = 2000;
+
+scene.add(camera);
+//events.js
+document.addEventListener('keydown', Keyboard, false);
+
+// Mouse Events
+document.addEventListener('mousedown', MouseDown, false);
+document.addEventListener('mouseup', MouseUp, false);
+document.addEventListener('wheel', Wheel, false);
+document.addEventListener('mousemove', MouseMove, false );
+
+// Touch Events
+
+window.addEventListener('contextmenu', function(event){event.preventDefault();}, false );
+window.addEventListener('resize', Resize, false );
+
+
+const MAXZOOM = 1E+3;
+const MINZOOM = 1E-3;
+const ZOOMSTEP = 1.1;
+
+var mouse = new THREE.Vector2();
+var last_mouse = new THREE.Vector2();
+
+var mouse_delta = new THREE.Vector2();
+
+function mouse_coords(x, y){
+	let w = width;
+	let h = height;
+
+	let m = Vec2(x - (w/2), -(y - (h/2)));
+	m.x /= camera.zoom;
+	m.y /= camera.zoom;
+	return m;
+}
+
+function Wheel(event){
+	let step = 1;
+	if (event.deltaY > 0) step = + ZOOMSTEP;
+	if (event.deltaY < 0) step = - ZOOMSTEP;
+
+	let zoom = (camera.zoom / step);
+	if (zoom <= MAXZOOM && zoom >= MINZOOM){
+		camera.zoom = zoom;
+		camera.updateProjectionMatrix();
+	}
+}
+
+function Keyboard(event){
+	switch(event.key){
+		case " ":
+			universe.change_texture();
+			break;
+		default:
+			break;
+	}
+}
+
+function MouseDown(event){
+    let m = mouse_coords(event.clientX, event.clientY);
+	switch(event.buttons){
+        case 1:
+            if (INTERSECTED){
+                GRABBED = INTERSECTED.body;
+                GRABBED.grab(m.x, m.y);
+            }
+            break;
+        case 2:
+			if (INTERSECTED){
+				RGRABBED = INTERSECTED.body;
+			}
+			else{
+				RGRABBED = universe;
+			}
+			RGRABBED.rgrab(m.x, m.y);
+            break;
+    }
+}
+
+function MouseUp(event){
+    switch(event.buttons){
+        case 0:
+			if (GRABBED){
+				GRABBED.ungrab();
+            	GRABBED = null;
+			}
+			else if (RGRABBED){
+				RGRABBED.rungrab();
+				RGRABBED = null;
+			}
+            break;
+    }
+}
+
+function MouseMove(event){
+    event.preventDefault();
+
+    mouse.x =   ( event.clientX / width  ) * 2 - 1;
+	mouse.y = - ( event.clientY / height ) * 2 + 1;
+
+	let m = mouse_coords(event.clientX, event.clientY);
+
+    if(GRABBED){
+        // Move grabbed
+        GRABBED.moveto(m.x, m.y);
+    }
+	else if (RGRABBED){
+		RGRABBED.rotateto(m.x, m.y);
+	}
+}
+
+function Resize(event){
+	width = window.innerWidth;
+	height = window.innerHeight;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+
 }
 //script.js
 function find_intersections(){
