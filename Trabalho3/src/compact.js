@@ -151,12 +151,12 @@ class Universe{
       this.rwrap.setpos(this.get_center());
       this.wrapping.setr(this.get_sphere_radius());
   	  this.group.add(this.wrapping.mesh);
-      this.group.add(this.rwrap);
+      this.group.add(this.rwrap.mesh);
     }
 
     unwrap(){
   	  this.group.remove(this.wrapping.mesh);
-      this.group.remove(this.rwrap);
+      this.group.remove(this.rwrap.mesh);
     }
     // ROTATING YEAHH
 
