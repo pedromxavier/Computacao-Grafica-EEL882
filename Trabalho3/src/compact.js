@@ -566,7 +566,7 @@ function Wheel(event){
 	let step = 1;
 	if (event.deltaY > 0) step = + ZOOMSTEP;
 	if (event.deltaY < 0) step = - ZOOMSTEP;
-
+	console.log(event.deltaY);
 	let zoom = (camera.zoom / step);
 	if (zoom <= MAXZOOM && zoom >= MINZOOM){
 		camera.zoom = zoom;
@@ -640,8 +640,8 @@ function MouseMove(event){
 function Resize(event){
 	width = window.innerWidth;
 	height = window.innerHeight;
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
+    //camera.aspect = width / height;
+//    camera.updateProjectionMatrix();
     renderer.setSize(width, height);
 
 }
