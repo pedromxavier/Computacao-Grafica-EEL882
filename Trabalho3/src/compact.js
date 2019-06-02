@@ -31,8 +31,6 @@ class Universe{
         this.wrapping = new WrappingSphere(1.0);
         this.wrapping.body = this;
 
-        this.rwrap = new WrappingSphere(300.0, 1);
-
         this.pos = this.group.position;
 		this.rot = this.group.quaternion;
 
@@ -46,6 +44,12 @@ class Universe{
 		let pos = Vec3();
 		this.group.getWorldPosition(pos);
 		return pos;
+	}
+
+    globalrot(){
+		let rot = Quat4();
+		this.group.getWorldQuaternion(rot);
+		return rot;
 	}
 
 	add(body){
@@ -68,13 +72,10 @@ class Universe{
 
 	ungroup(){
 		for(let i=0;i<this.bodies.length;i++){
-			let pos = Vec3();
-			let rot = Quat4();
-
 			let obj = this.bodies[i];
 
-			obj.mesh.getWorldQuaternion(rot);
-			obj.mesh.getWorldPosition(pos);
+            let pos = obj.globalpos();
+			let rot = obj.globalrot();
 
 			this.group.remove(obj.mesh);
 			scene.add(obj.mesh);
@@ -116,13 +117,6 @@ class Universe{
         return v;
     }
 
-	update(){
-        let i;
-		for(i=0;i<this.bodies.length;i++){
-			this.bodies[i].update();
-		}
-    }
-
     // ROTATING YEAHH
     rgrab(x, y){
 		this.mkgroup();
@@ -134,7 +128,6 @@ class Universe{
 	rungrab(){
 		this.unwrap();
 		this.ungroup();
-		this.update();
 	}
 
     rotateto(x, y){
@@ -147,16 +140,13 @@ class Universe{
 
 
     wrap(){
-      this.wrapping.setpos(this.get_center());
-      this.rwrap.setpos(this.get_center());
-      this.wrapping.setr(this.get_sphere_radius());
-  	  this.group.add(this.wrapping.mesh);
-      this.group.add(this.rwrap.mesh);
+        this.wrapping.setpos(this.get_center());
+        this.wrapping.setr(this.get_sphere_radius());
+        this.group.add(this.wrapping.mesh);
     }
 
     unwrap(){
-  	  this.group.remove(this.wrapping.mesh);
-      this.group.remove(this.rwrap.mesh);
+        this.group.remove(this.wrapping.mesh);
     }
     // ROTATING YEAHH
 
@@ -200,11 +190,10 @@ class Universe{
 }
 
 class WrappingSphere{
-	constructor(r, red=false){
-        this.color = red ? 0xff0000:0x777777;
+	constructor(r){
 		this.r = r;
 		this.geometry = new THREE.SphereGeometry(this.r, SPHERE_DIVS, SPHERE_DIVS);
-		this.material = new THREE.MeshBasicMaterial({transparent: true, opacity: 0.5, color: this.color})
+		this.material = new THREE.MeshBasicMaterial({transparent: true, opacity: 0.5, color: 0x777777})
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
 
         this.pos = this.mesh.position;
@@ -327,6 +316,12 @@ class Planet{
 		this.mesh.getWorldPosition(pos);
 		return pos;
 	}
+
+    globalrot(){
+        let rot = Quat4();
+        this.mesh.getWorldQuaternion(rot);
+        return rot;
+    }
 
 
 	mouse_xyz(x, y){ // screen coordinates
