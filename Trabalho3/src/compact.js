@@ -40,6 +40,12 @@ class Universe{
         this.source.play();
 	}
 
+    globalpos(){
+		let pos = Vec3();
+		this.group.getWorldPosition(pos);
+		return pos;
+	}
+
 	add(body){
 		this.bodies.push(body);
 		scene.add(body.mesh);
@@ -151,7 +157,7 @@ class Universe{
 
 	change_texture(){
 		this.cage = !this.cage;
-        
+
 		for(let i=0;i<this.bodies.length;i++){
 			this.bodies[i].change_texture(this.cage);
 		}
@@ -177,8 +183,9 @@ class Universe{
 
 	get_sphere_radius(){
 		let R = 0;
+        let x = this.get_center();
 		for(let i=0;i<this.bodies.length;i++){
-			let r = (this.pos.distanceTo(this.bodies[i].globalpos()) + this.bodies[i].wr);
+			let r = (x.distanceTo(this.bodies[i].globalpos()) + this.bodies[i].wr);
 			if (r > R){
 				R = r;
 			}
