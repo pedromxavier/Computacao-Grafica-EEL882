@@ -52,40 +52,6 @@ class Universe{
 		return rot;
 	}
 
-	add(body){
-		this.bodies.push(body);
-		scene.add(body.mesh);
-	}
-
-	mkgroup(){
-		this.pos.copy(this.get_center());
-		this.rot.copy(Quat4());
-
-		for(let i=0;i<this.bodies.length;i++){
-			let obj = this.bodies[i]
-			obj.pos.sub(this.pos);
-			scene.remove(obj.mesh);
-			this.group.add(obj.mesh);
-		}
-		scene.add(this.group);
-	}
-
-	ungroup(){
-		for(let i=0;i<this.bodies.length;i++){
-			let obj = this.bodies[i];
-
-            let pos = obj.globalpos();
-			let rot = obj.globalrot();
-
-			this.group.remove(obj.mesh);
-			scene.add(obj.mesh);
-
-			obj.pos.copy(pos);
-			obj.rot.copy(rot);
-		}
-		scene.remove(this.group);
-	}
-
     mouse_xyz(x, y){ // screen coordinates
         let dx = (x - this.pos.x);
         let dy = (y - this.pos.y);
@@ -117,6 +83,43 @@ class Universe{
         return v;
     }
 
+	add(body){
+		this.bodies.push(body);
+		scene.add(body.mesh);
+	}
+
+	mkgroup(){
+		this.pos.copy(this.get_center());
+		this.rot.copy(Quat4());
+
+		for(let i=0;i<this.bodies.length;i++){
+			let obj = this.bodies[i]
+			obj.pos.sub(this.pos);
+
+			scene.remove(obj.mesh);
+			this.group.add(obj.mesh);
+		}
+		scene.add(this.group);
+	}
+
+	ungroup(){
+		for(let i=0;i<this.bodies.length;i++){
+			let obj = this.bodies[i];
+
+            let pos = obj.globalpos();
+			let rot = obj.globalrot();
+
+			this.group.remove(obj.mesh);
+			scene.add(obj.mesh);
+
+			obj.pos.copy(pos);
+			obj.rot.copy(rot);
+		}
+		scene.remove(this.group);
+	}
+
+
+
     // ROTATING YEAHH
     rgrab(x, y){
 		this.mkgroup();
@@ -142,11 +145,12 @@ class Universe{
     wrap(){
         this.wrapping.setpos(this.get_center());
         this.wrapping.setr(this.get_sphere_radius());
-        this.group.add(this.wrapping.mesh);
+
+        scene.add(this.wrapping.mesh);
     }
 
     unwrap(){
-        this.group.remove(this.wrapping.mesh);
+        scene.remove(this.wrapping.mesh);
     }
     // ROTATING YEAHH
 
