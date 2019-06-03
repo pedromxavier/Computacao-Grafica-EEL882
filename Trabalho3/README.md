@@ -6,5 +6,6 @@ Instruções:
   1. Para mover um objeto: basta clicar com o <b>botão esquerdo</b> sobre o objeto e arrastar.
   2. Para girar um objeto específico: clicar com o <b>botão direito</b> sobre o objeto e arrastar.
   3. Para girar todos os objetos: clicar com o <b>botão direito</b> onde não houver nenhum objeto (o fundo) e arrastar.
+  4. Pressionar <b>espaço</b> troca entre as texturas disponíveis. 
 
 <a href="https://pedromxavier.github.io/Computacao-Grafica-EEL882/Trabalho3/">link</a>
