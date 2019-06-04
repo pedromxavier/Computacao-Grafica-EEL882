@@ -313,7 +313,7 @@ class Star{
     }
 
     randpos(){
-        this.far = 500;//this.universe.far/2 - 1;
+        this.far = this.universe.far/2;
         this.rho = TAU*Math.random();
 
         this.setpos();
@@ -599,7 +599,7 @@ const stars = {
 
 camera.position.x = 0;
 camera.position.y = 0;
-camera.position.z = FAR/2 - 1;
+camera.position.z = FAR/4;
 
 scene.add(camera);
 //events.js
