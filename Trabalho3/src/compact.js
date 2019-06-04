@@ -275,7 +275,7 @@ class Star{
         this.castShadow = true;
 
         this.geometry = new THREE.SphereGeometry(this.r, SPHERE_DIVS, SPHERE_DIVS);
-		this.material = = new THREE.MeshStandardMaterial( {
+		this.material = new THREE.MeshStandardMaterial( {
 					emissive: 0xffffee,
 					emissiveIntensity: 1,
 					color: 0x000000
