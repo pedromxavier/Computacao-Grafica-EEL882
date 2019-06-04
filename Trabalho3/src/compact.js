@@ -295,7 +295,7 @@ class Ring{
 }
 
 class Star{
-    constructor(universe, r, steps=1200){
+    constructor(universe, r, steps=2400){
         this.STEPS = steps;
 
 
@@ -304,14 +304,14 @@ class Star{
 
         this.color = 0xffffee;
 
-        this.light = new THREE.PointLight(0xffffee, 1, 0, 2);
-        this.castShadow = true;
+        this.light = new THREE.PointLight(0xffffee, 1, 0, 0.1);
+        // this.castShadow = true;
 
         this.geometry = new THREE.SphereGeometry(this.r, SPHERE_DIVS, SPHERE_DIVS);
 		this.material = new THREE.MeshStandardMaterial({
 					emissive: 0xffffee,
 					emissiveIntensity: 1,
-					color: 0x000000
+                    color: 0x000000
 				});
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.light.add(this.mesh);
@@ -546,11 +546,11 @@ var raycaster = new THREE.Raycaster();
 var listener = new THREE.AudioListener();
 
 var renderer = new THREE.WebGLRenderer();
-renderer.physicallyCorrectLights = true;
+//renderer.physicallyCorrectLights = true;
 renderer.gammaInput = true;
 renderer.gammaOutput = true;
 renderer.shadowMap.enabled = true;
-renderer.toneMapping = THREE.ReinhardToneMapping;
+//renderer.toneMapping = THREE.ReinhardToneMapping;
 renderer.setSize(width, height);
 document.body.appendChild(renderer.domElement);
 
