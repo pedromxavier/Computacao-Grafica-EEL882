@@ -293,8 +293,8 @@ class Ring{
 }
 
 class Star{
-    constructor(universe, r){
-        this.STEPS = 1200;
+    constructor(universe, r, steps=1200){
+        this.STEPS = steps;
 
 
         this.universe = universe;
@@ -371,7 +371,7 @@ class Planet{
 			this.geometry.applyMatrix(new THREE.Matrix4().makeScale( 1.0, 1.0, 0.05));
 		}
 
-		this.material = new THREE.MeshBasicMaterial({map: this.texture});
+		this.material = new THREE.MeshStandardMaterial({map: this.texture});
 		this.material.needsUpdate = true;
 
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
