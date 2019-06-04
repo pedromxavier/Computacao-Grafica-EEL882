@@ -266,6 +266,9 @@ class Ring{
 
 class Star{
     constructor(universe, r){
+        this.STEPS = 12000;
+
+
         this.universe = universe;
         this.r = r;
 
@@ -275,30 +278,46 @@ class Star{
         this.castShadow = true;
 
         this.geometry = new THREE.SphereGeometry(this.r, SPHERE_DIVS, SPHERE_DIVS);
-		this.material = new THREE.MeshStandardMaterial( {
+		this.material = new THREE.MeshStandardMaterial({
 					emissive: 0xffffee,
 					emissiveIntensity: 1,
 					color: 0x000000
-				} );
+				});
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.light.add(this.mesh);
 
         this.randpos();
+        this.randvel();
 
         scene.add(this.light);
     }
 
+    move(){
+        this.rho += this.vrho;
+
+        this.setpos();
+    }
+
+    update(){
+        this.move();
+    }
+
+    randvel(){
+        this.vrho = (TAU*Math.random())/this.STEPS;
+    }
+
+    setpos(){
+        let x = this.far*Math.cos(this.rho);
+        let z = this.far*Math.sin(this.rho);
+
+        this.light.position.set(x, 0, z);
+    }
 
     randpos(){
-        let r = this.universe.far;
-        let rho = 2*Math.PI*Math.random();
-        let phi =   Math.PI*Math.random();
+        this.far = this.universe.far/2 - 1;
+        this.rho = TAU*Math.random();
 
-        let x = r*Math.cos(phi)*Math.cos(rho);
-        let y = r*Math.cos(phi)*Math.sin(rho);
-        let z = r*Math.sin(phi)
-
-        this.mesh.position.set(x, y, z);
+        this.setpos();
     }
 }
 
@@ -503,6 +522,10 @@ var INTERSECTED = null;
 var GRABBED     = null;
 var RGRABBED    = null;
 
+const PI = Math.PI;
+const TAU = 2*Math.PI;
+
+
 const audios = {
     universe : new Audio("../Trabalho3/audio/pavene.mp3")
 };
@@ -577,7 +600,7 @@ const stars = {
 
 camera.position.x = 0;
 camera.position.y = 0;
-camera.position.z = 2000;
+camera.position.z = FAR/2 - 1;
 
 scene.add(camera);
 //events.js
@@ -721,6 +744,8 @@ function animate() {
 	requestAnimationFrame(animate);
 
 	find_intersections();
+
+	stars.sun.update();
 
 	render();
 }
