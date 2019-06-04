@@ -274,10 +274,12 @@ class Ring{
 
 		this.geometry = new THREE.TorusGeometry(this.r, this.width/2, 2, 2*RING_DIVS);
 
-		this.material = new THREE.MeshBasicMaterial({map: this.texture});
+		this.material = new THREE.MeshStandardMaterial({map: this.texture});
 		this.material.side = THREE.DoubleSide;
 
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.castShadow = true;
+        this.mesh.receiveShadow = true;
 
 		this.mesh.rotation.x = Math.PI/2;
 	}
@@ -375,6 +377,8 @@ class Planet{
 		this.material.needsUpdate = true;
 
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
         this.mesh.body = this;
 
         this.pos = this.mesh.position;
