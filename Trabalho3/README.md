@@ -8,4 +8,4 @@ Instruções:
   3. Para girar todos os objetos: clicar com o <b>botão direito</b> onde não houver nenhum objeto (o fundo) e arrastar.
   4. Pressionar <b>espaço</b> troca entre as texturas disponíveis. 
 
-<a href="https://pedromxavier.github.io/Computacao-Grafica-EEL882/Trabalho3/">link</a>
+<a target="_blank" rel="noopener noreferrer" href="https://pedromxavier.github.io/Computacao-Grafica-EEL882/Trabalho3/">link</a>
