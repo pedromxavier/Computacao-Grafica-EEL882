@@ -83,6 +83,11 @@ class Universe{
         return v;
     }
 
+    addstar(star){
+        this.stars.push(star);
+        scene.add(star.light);
+    }
+
 	add(body){
 		this.bodies.push(body);
 		scene.add(body.mesh);
@@ -162,6 +167,10 @@ class Universe{
 			this.bodies[i].change_texture(this.cage);
 		}
 
+        for(let j=0;j<this.stars.length;j++){
+			this.stars[j].change_texture(this.cage);
+		}
+
         if (this.cage){
             this.source.pause();
             this.cage_source.play();
@@ -206,9 +215,15 @@ class WrappingSphere{
         this.rgeometry = new THREE.SphereGeometry(this.r/10, SPHERE_DIVS, SPHERE_DIVS);
 		this.rmaterial = new THREE.MeshBasicMaterial({color: 0xff0000});
 		this.rmesh = new THREE.Mesh(this.rgeometry, this.rmaterial);
-
-        this.mesh.add(this.rmesh);
 	}
+
+    change_texture(cage){
+        if (cage){
+            this.mesh.add(this.rmesh);
+        } else{
+            this.mesh.remove(this.rmesh);
+        }
+    }
 
 	setpos(pos){
 		this.pos.copy(pos);
@@ -289,7 +304,7 @@ class Star{
         this.randpos();
         this.randvel();
 
-        scene.add(this.light);
+        this.universe.addstar(this);
     }
 
     move(){
@@ -498,7 +513,7 @@ var width = window.innerWidth;
 var height = window.innerHeight;
 
 const NEAR = 0;
-const FAR = 10000;
+const FAR = 20000;
 
 const CAM = 2;
 var camera = new THREE.OrthographicCamera( width/(-CAM), width/CAM, height/CAM, height/(-CAM), NEAR, FAR);
@@ -599,7 +614,7 @@ const stars = {
 
 camera.position.x = 0;
 camera.position.y = 0;
-camera.position.z = FAR/4;
+camera.position.z = 2000;
 
 scene.add(camera);
 //events.js
