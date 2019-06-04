@@ -25,6 +25,7 @@ class Universe{
 
         this.group = new THREE.Group;
 		this.bodies = [];
+        this.stars  = [];
 
 		this.cage = false;
 
@@ -39,6 +40,16 @@ class Universe{
 
         this.source.play();
 	}
+
+    update(){
+		for(let i=0;i<this.bodies.length;i++){
+			this.bodies[i].update();
+		}
+
+        for(let j=0;j<this.stars.length;j++){
+			this.stars[j].update();
+		}
+    }
 
     globalpos(){
 		let pos = Vec3();
@@ -170,6 +181,8 @@ class Universe{
         for(let j=0;j<this.stars.length;j++){
 			this.stars[j].change_texture(this.cage);
 		}
+
+        this.wrapping.change_texture(this.cage);
 
         if (this.cage){
             this.source.pause();
@@ -307,6 +320,10 @@ class Star{
         this.universe.addstar(this);
     }
 
+    change_texture(cage){
+
+    }
+
     move(){
         this.rho += this.vrho;
         this.setpos();
@@ -358,7 +375,6 @@ class Planet{
 		this.material.needsUpdate = true;
 
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
-
         this.mesh.body = this;
 
         this.pos = this.mesh.position;
@@ -526,6 +542,11 @@ var raycaster = new THREE.Raycaster();
 var listener = new THREE.AudioListener();
 
 var renderer = new THREE.WebGLRenderer();
+renderer.physicallyCorrectLights = true;
+renderer.gammaInput = true;
+renderer.gammaOutput = true;
+renderer.shadowMap.enabled = true;
+renderer.toneMapping = THREE.ReinhardToneMapping;
 renderer.setSize(width, height);
 document.body.appendChild(renderer.domElement);
 
@@ -609,12 +630,12 @@ const planets = {
 };
 
 const stars = {
-    sun : new Star(universe, 1000)
+    sun : new Star(universe, 500)
 };
 
 camera.position.x = 0;
 camera.position.y = 0;
-camera.position.z = 2000;
+camera.position.z = FAR/10;
 
 scene.add(camera);
 //events.js
@@ -759,7 +780,7 @@ function animate() {
 
 	find_intersections();
 
-	stars.sun.update();
+	universe.update();
 
 	render();
 }
