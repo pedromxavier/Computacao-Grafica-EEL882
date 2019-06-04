@@ -94,7 +94,7 @@ class Universe{
 
 		for(let i=0;i<this.bodies.length;i++){
 			let obj = this.bodies[i]
-            
+
 			obj.pos.sub(this.pos);
 
 			scene.remove(obj.mesh);
@@ -202,6 +202,12 @@ class WrappingSphere{
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
 
         this.pos = this.mesh.position;
+
+        this.rgeometry = new THREE.SphereGeometry(30, SPHERE_DIVS, SPHERE_DIVS);
+		this.rmaterial = new THREE.MeshBasicMaterial({color: 0xff0000});
+		this.rmesh = new THREE.Mesh(this.rgeometry, this.rmaterial);
+
+        this.mesh.add(this.rmesh);
 	}
 
 	setpos(pos){
@@ -254,6 +260,45 @@ class Ring{
   	  else{
   		  this.material.map = this.texture;
   	  }
+    }
+}
+
+
+class Star{
+    constructor(universe, r){
+        this.universe = universe;
+        this.r = r;
+
+        this.color = 0xffffee;
+
+        this.light = new THREE.PointLight(0xffffee, 1, 0, 2);
+        this.castShadow = true;
+
+        this.geometry = new THREE.SphereGeometry(this.r, SPHERE_DIVS, SPHERE_DIVS);
+		this.material = = new THREE.MeshStandardMaterial( {
+					emissive: 0xffffee,
+					emissiveIntensity: 1,
+					color: 0x000000
+				} );
+		this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.light.add(this.mesh);
+
+        this.randpos();
+
+        scene.add(this.light);
+    }
+
+
+    randpos(){
+        let r = this.universe.far;
+        let rho = 2*Math.PI*Math.random();
+        let phi =   Math.PI*Math.random();
+
+        let x = r*Math.cos(phi)*Math.cos(rho);
+        let y = r*Math.cos(phi)*Math.sin(rho);
+        let z = r*Math.sin(phi)
+
+        this.mesh.position.set(x, y, z);
     }
 }
 
@@ -525,6 +570,10 @@ const planets = {
 	neptune : new Planet(universe,  38, 'neptune', Vec3(1080,0,0), false),
 	pluto   : new Planet(universe,   2,   'pluto', Vec3(1160,0,0), false)
 };
+
+const stars = {
+    sun : new Star(universe, 1000);
+}
 
 camera.position.x = 0;
 camera.position.y = 0;
