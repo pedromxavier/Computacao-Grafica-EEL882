@@ -573,7 +573,7 @@ const planets = {
 
 const stars = {
     sun : new Star(universe, 1000);
-}
+};
 
 camera.position.x = 0;
 camera.position.y = 0;
