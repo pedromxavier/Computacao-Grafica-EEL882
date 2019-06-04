@@ -219,6 +219,11 @@ class WrappingSphere{
         this.mesh.scale.x *= s;
         this.mesh.scale.y *= s;
         this.mesh.scale.z *= s;
+
+        this.rmesh.scale.x /= s;
+        this.rmesh.scale.y /= s;
+        this.rmesh.scale.z /= s;
+
         this.r = r;
     }
 }
@@ -294,7 +299,6 @@ class Star{
 
     move(){
         this.rho += this.vrho;
-
         this.setpos();
     }
 
@@ -314,7 +318,7 @@ class Star{
     }
 
     randpos(){
-        this.far = this.universe.far/2 - 1;
+        this.far = 500;//this.universe.far/2 - 1;
         this.rho = TAU*Math.random();
 
         this.setpos();
