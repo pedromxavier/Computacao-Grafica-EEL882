@@ -203,7 +203,7 @@ class WrappingSphere{
 
         this.pos = this.mesh.position;
 
-        this.rgeometry = new THREE.SphereGeometry(30, SPHERE_DIVS, SPHERE_DIVS);
+        this.rgeometry = new THREE.SphereGeometry(this.r/10, SPHERE_DIVS, SPHERE_DIVS);
 		this.rmaterial = new THREE.MeshBasicMaterial({color: 0xff0000});
 		this.rmesh = new THREE.Mesh(this.rgeometry, this.rmaterial);
 
@@ -219,10 +219,6 @@ class WrappingSphere{
         this.mesh.scale.x *= s;
         this.mesh.scale.y *= s;
         this.mesh.scale.z *= s;
-
-        this.rmesh.scale.x /= s;
-        this.rmesh.scale.y /= s;
-        this.rmesh.scale.z /= s;
 
         this.r = r;
     }
@@ -268,10 +264,9 @@ class Ring{
     }
 }
 
-
 class Star{
     constructor(universe, r){
-        this.STEPS = 12000;
+        this.STEPS = 1200;
 
 
         this.universe = universe;
