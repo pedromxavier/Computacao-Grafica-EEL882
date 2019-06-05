@@ -544,8 +544,7 @@ const CAM = 2;
 
 var ortho_camera = new THREE.OrthographicCamera( width/(-CAM), width/CAM, height/CAM, height/(-CAM), NEAR, FAR);
 
-var perps_camera = new THREE.PerspectiveCamera(FOV, width / height, NEAR, FAR);
-
+var persp_camera = new THREE.PerspectiveCamera(FOV, width / height, NEAR, FAR);
 
 var camera;
 
@@ -691,7 +690,7 @@ function toggle_camera(){
 	if (ORTHO){
 		ortho_camera.position.copy(persp_camera.position);
 		ortho_camera.rotation.copy(persp_camera.rotation);
-		ortho_camera.zoom = perps_camera.zoom;
+		ortho_camera.zoom = persp_camera.zoom;
 
 		scene.remove(camera);
 		camera = ortho_camera;

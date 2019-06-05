@@ -14,8 +14,7 @@ const CAM = 2;
 
 var ortho_camera = new THREE.OrthographicCamera( width/(-CAM), width/CAM, height/CAM, height/(-CAM), NEAR, FAR);
 
-var perps_camera = new THREE.PerspectiveCamera(FOV, width / height, NEAR, FAR);
-
+var persp_camera = new THREE.PerspectiveCamera(FOV, width / height, NEAR, FAR);
 
 var camera;
 

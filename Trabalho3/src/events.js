@@ -27,7 +27,7 @@ function toggle_camera(){
 	if (ORTHO){
 		ortho_camera.position.copy(persp_camera.position);
 		ortho_camera.rotation.copy(persp_camera.rotation);
-		ortho_camera.zoom = perps_camera.zoom;
+		ortho_camera.zoom = persp_camera.zoom;
 
 		scene.remove(camera);
 		camera = ortho_camera;
