@@ -17,6 +17,8 @@ function animate() {
 
 	find_intersections();
 
+	universe.update();
+
 	render();
 }
 

@@ -373,7 +373,10 @@ class Planet{
 			this.geometry.applyMatrix(new THREE.Matrix4().makeScale( 1.0, 1.0, 0.05));
 		}
 
-		this.material = new THREE.MeshStandardMaterial({map: this.texture});
+		this.material = new THREE.MeshStandardMaterial({
+            map: this.texture,
+            metalness: 0.1
+        });
 		this.material.needsUpdate = true;
 
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -477,8 +480,6 @@ class Planet{
 	  this.pos.addVectors(this.ghost, w);
 	}
 
-
-
 	rgrab(x, y){
 		this.wrap();
 		this.hook = this.umouse_xyz(x, y);
@@ -492,9 +493,9 @@ class Planet{
 	rotateto(x, y){
 	  let u = this.hook;
 	  let v = this.umouse_xyz(x, y);
-	  this.quat.setFromUnitVectors(u, v);
+	  let q = Quat4().setFromUnitVectors(u, v);
 	  this.mesh.quaternion.copy(this.ghost);
-	  this.mesh.quaternion.premultiply(this.quat);
+	  this.mesh.quaternion.premultiply(q);
 	}
 
 	wrap(){
@@ -532,13 +533,29 @@ var scene = new THREE.Scene();
 var width = window.innerWidth;
 var height = window.innerHeight;
 
-const NEAR = 0;
+const NEAR = 1;
 const FAR = 20000;
+const FOV = 45;
+
+
+var ORTHO = true;
 
 const CAM = 2;
-var camera = new THREE.OrthographicCamera( width/(-CAM), width/CAM, height/CAM, height/(-CAM), NEAR, FAR);
 
-var ambient_light = new THREE.AmbientLight(0xffffee, 0.1); // soft yellow light
+var ortho_camera = new THREE.OrthographicCamera( width/(-CAM), width/CAM, height/CAM, height/(-CAM), NEAR, FAR);
+
+var perps_camera = new THREE.PerspectiveCamera(FOV, width / height, NEAR, FAR);
+
+
+var camera;
+
+if(ORTHO){
+    camera = ortho_camera;
+} else{
+    camera = persp_camera;
+}
+
+var ambient_light = new THREE.AmbientLight(0xffffee, 0.05); // soft yellow light
 scene.add(ambient_light);
 
 var loader = new THREE.TextureLoader();
@@ -641,7 +658,7 @@ const stars = {
 
 camera.position.x = 0;
 camera.position.y = 0;
-camera.position.z = FAR/10;
+camera.position.z = FAR/8;
 
 scene.add(camera);
 //events.js
@@ -667,6 +684,29 @@ var mouse = new THREE.Vector2();
 var last_mouse = new THREE.Vector2();
 
 var mouse_delta = new THREE.Vector2();
+
+function toggle_camera(){
+	ORTHO = !ORTHO;
+
+	if (ORTHO){
+		ortho_camera.position.copy(persp_camera.position);
+		ortho_camera.rotation.copy(persp_camera.rotation);
+		ortho_camera.zoom = perps_camera.zoom;
+
+		scene.remove(camera);
+		camera = ortho_camera;
+		scene.add(camera);
+	}
+	else{
+		persp_camera.position.copy(ortho_camera.position);
+		persp_camera.rotation.copy(ortho_camera.rotation);
+		persp_camera.zoom = ortho_camera.zoom;
+
+		scene.remove(camera);
+		camera = persp_camera;
+		scene.add(camera);
+	}
+}
 
 function mouse_coords(x, y){
 	let w = width;
@@ -694,6 +734,9 @@ function Keyboard(event){
 	switch(event.key){
 		case " ":
 			universe.change_texture();
+			break;
+		case "c":
+			toggle_camera();
 			break;
 		default:
 			break;
@@ -759,11 +802,14 @@ function Resize(event){
 
 	renderer.setSize(width, height);
 
+if (ORTHO){
 	camera.left   = -width/CAM;
 	camera.right  =  width/CAM;
 	camera.top    =  height/CAM;
 	camera.bottom = -height/CAM;
-
+} else{
+	camera.aspect = width/height;
+}
 	camera.updateProjectionMatrix();
 }
 //script.js

@@ -24,6 +24,7 @@ class Universe{
 
         this.group = new THREE.Group;
 		this.bodies = [];
+        this.stars  = [];
 
 		this.cage = false;
 
@@ -39,41 +40,26 @@ class Universe{
         this.source.play();
 	}
 
-	add(body){
-		this.bodies.push(body);
-		scene.add(body.mesh);
+    update(){
+		for(let i=0;i<this.bodies.length;i++){
+			this.bodies[i].update();
+		}
+
+        for(let j=0;j<this.stars.length;j++){
+			this.stars[j].update();
+		}
+    }
+
+    globalpos(){
+		let pos = Vec3();
+		this.group.getWorldPosition(pos);
+		return pos;
 	}
 
-	mkgroup(){
-		this.pos.copy(this.get_center());
-		this.rot.copy(Quat4());
-
-		for(let i=0;i<this.bodies.length;i++){
-			let obj = this.bodies[i]
-			obj.pos.sub(this.pos);
-			scene.remove(obj.mesh);
-			this.group.add(obj.mesh);
-		}
-		scene.add(this.group);
-	}
-
-	ungroup(){
-		for(let i=0;i<this.bodies.length;i++){
-			let pos = Vec3();
-			let rot = Quat4();
-
-			let obj = this.bodies[i];
-
-			obj.mesh.getWorldQuaternion(rot);
-			obj.mesh.getWorldPosition(pos);
-
-			this.group.remove(obj.mesh);
-			scene.add(obj.mesh);
-
-			obj.pos.copy(pos);
-			obj.rot.copy(rot);
-		}
-		scene.remove(this.group);
+    globalrot(){
+		let rot = Quat4();
+		this.group.getWorldQuaternion(rot);
+		return rot;
 	}
 
     mouse_xyz(x, y){ // screen coordinates
@@ -107,12 +93,48 @@ class Universe{
         return v;
     }
 
-	update(){
-        let i;
-		for(i=0;i<this.bodies.length;i++){
-			this.bodies[i].update();
-		}
+    addstar(star){
+        this.stars.push(star);
+        scene.add(star.light);
     }
+
+	add(body){
+		this.bodies.push(body);
+		scene.add(body.mesh);
+	}
+
+	mkgroup(){
+		this.pos.copy(this.get_center());
+		this.rot.copy(Quat4());
+
+		for(let i=0;i<this.bodies.length;i++){
+			let obj = this.bodies[i]
+
+			obj.pos.sub(this.pos);
+
+			scene.remove(obj.mesh);
+			this.group.add(obj.mesh);
+		}
+		scene.add(this.group);
+	}
+
+	ungroup(){
+		for(let i=0;i<this.bodies.length;i++){
+			let obj = this.bodies[i];
+
+            let pos = obj.globalpos();
+			let rot = obj.globalrot();
+
+			this.group.remove(obj.mesh);
+			scene.add(obj.mesh);
+
+			obj.pos.copy(pos);
+			obj.rot.copy(rot);
+		}
+		scene.remove(this.group);
+	}
+
+
 
     // ROTATING YEAHH
     rgrab(x, y){
@@ -125,7 +147,6 @@ class Universe{
 	rungrab(){
 		this.unwrap();
 		this.ungroup();
-		this.update();
 	}
 
     rotateto(x, y){
@@ -138,22 +159,29 @@ class Universe{
 
 
     wrap(){
-      this.wrapping.setpos(this.pos);
-      this.wrapping.setr(this.get_sphere_radius());
-  	  this.group.add(this.wrapping.mesh);
+        this.wrapping.setpos(this.get_center());
+        this.wrapping.setr(this.get_sphere_radius()*1.1);
+
+        scene.add(this.wrapping.mesh);
     }
 
     unwrap(){
-  	  this.group.remove(this.wrapping.mesh);
+        scene.remove(this.wrapping.mesh);
     }
     // ROTATING YEAHH
 
 	change_texture(){
 		this.cage = !this.cage;
-		let i;
-		for(i=0;i<this.bodies.length;i++){
+
+		for(let i=0;i<this.bodies.length;i++){
 			this.bodies[i].change_texture(this.cage);
 		}
+
+        for(let j=0;j<this.stars.length;j++){
+			this.stars[j].change_texture(this.cage);
+		}
+
+        this.wrapping.change_texture(this.cage);
 
         if (this.cage){
             this.source.pause();
@@ -167,21 +195,18 @@ class Universe{
 
 	get_center(){
 		let x = Vec3(0,0,0);
-		let pos = Vec3();
 		for(let i=0;i<this.bodies.length;i++){
-			let obj = this.bodies[i];
-			obj.mesh.getWorldPosition(pos);
-			x.add(pos);
+			x.add(this.bodies[i].globalpos());
 		}
 		x.divideScalar(this.bodies.length);
 		return x;
 	}
 
 	get_sphere_radius(){
-		let i;
 		let R = 0;
-		for(i=0;i<this.bodies.length;i++){
-			let r = (this.pos.distanceTo(this.bodies[i].pos) + this.bodies[i].wr);
+        let x = this.get_center();
+		for(let i=0;i<this.bodies.length;i++){
+			let r = (x.distanceTo(this.bodies[i].globalpos()) + this.bodies[i].wr);
 			if (r > R){
 				R = r;
 			}
@@ -198,7 +223,19 @@ class WrappingSphere{
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
 
         this.pos = this.mesh.position;
+
+        this.rgeometry = new THREE.SphereGeometry(this.r/10, SPHERE_DIVS, SPHERE_DIVS);
+		this.rmaterial = new THREE.MeshBasicMaterial({color: 0xff0000});
+		this.rmesh = new THREE.Mesh(this.rgeometry, this.rmaterial);
 	}
+
+    change_texture(cage){
+        if (cage){
+            this.mesh.add(this.rmesh);
+        } else{
+            this.mesh.remove(this.rmesh);
+        }
+    }
 
 	setpos(pos){
 		this.pos.copy(pos);
@@ -209,6 +246,7 @@ class WrappingSphere{
         this.mesh.scale.x *= s;
         this.mesh.scale.y *= s;
         this.mesh.scale.z *= s;
+
         this.r = r;
     }
 }
@@ -235,10 +273,12 @@ class Ring{
 
 		this.geometry = new THREE.TorusGeometry(this.r, this.width/2, 2, 2*RING_DIVS);
 
-		this.material = new THREE.MeshBasicMaterial({map: this.texture});
+		this.material = new THREE.MeshStandardMaterial({map: this.texture});
 		this.material.side = THREE.DoubleSide;
 
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.castShadow = true;
+        this.mesh.receiveShadow = true;
 
 		this.mesh.rotation.x = Math.PI/2;
 	}
@@ -250,6 +290,66 @@ class Ring{
   	  else{
   		  this.material.map = this.texture;
   	  }
+    }
+}
+
+class Star{
+    constructor(universe, r, steps=2400){
+        this.STEPS = steps;
+
+
+        this.universe = universe;
+        this.r = r;
+
+        this.color = 0xffffee;
+
+        this.light = new THREE.PointLight(0xffffee, 1, 0, 0.1);
+        // this.castShadow = true;
+
+        this.geometry = new THREE.SphereGeometry(this.r, SPHERE_DIVS, SPHERE_DIVS);
+		this.material = new THREE.MeshStandardMaterial({
+					emissive: 0xffffee,
+					emissiveIntensity: 1,
+                    color: 0x000000
+				});
+		this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.light.add(this.mesh);
+
+        this.randpos();
+        this.randvel();
+
+        this.universe.addstar(this);
+    }
+
+    change_texture(cage){
+
+    }
+
+    move(){
+        this.rho += this.vrho;
+        this.setpos();
+    }
+
+    update(){
+        this.move();
+    }
+
+    randvel(){
+        this.vrho = (TAU*Math.random())/this.STEPS;
+    }
+
+    setpos(){
+        let x = this.far*Math.cos(this.rho);
+        let z = this.far*Math.sin(this.rho);
+
+        this.light.position.set(x, 0, z);
+    }
+
+    randpos(){
+        this.far = this.universe.far/2;
+        this.rho = TAU*Math.random();
+
+        this.setpos();
     }
 }
 
@@ -272,11 +372,15 @@ class Planet{
 			this.geometry.applyMatrix(new THREE.Matrix4().makeScale( 1.0, 1.0, 0.05));
 		}
 
-		this.material = new THREE.MeshBasicMaterial({map: this.texture});
+		this.material = new THREE.MeshStandardMaterial({
+            map: this.texture,
+            metalness: 0.1
+        });
 		this.material.needsUpdate = true;
 
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
-
+        this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
         this.mesh.body = this;
 
         this.pos = this.mesh.position;
@@ -317,6 +421,12 @@ class Planet{
 		this.mesh.getWorldPosition(pos);
 		return pos;
 	}
+
+    globalrot(){
+        let rot = Quat4();
+        this.mesh.getWorldQuaternion(rot);
+        return rot;
+    }
 
 
 	mouse_xyz(x, y){ // screen coordinates
@@ -369,8 +479,6 @@ class Planet{
 	  this.pos.addVectors(this.ghost, w);
 	}
 
-
-
 	rgrab(x, y){
 		this.wrap();
 		this.hook = this.umouse_xyz(x, y);
@@ -384,9 +492,9 @@ class Planet{
 	rotateto(x, y){
 	  let u = this.hook;
 	  let v = this.umouse_xyz(x, y);
-	  this.quat.setFromUnitVectors(u, v);
+	  let q = Quat4().setFromUnitVectors(u, v);
 	  this.mesh.quaternion.copy(this.ghost);
-	  this.mesh.quaternion.premultiply(this.quat);
+	  this.mesh.quaternion.premultiply(q);
 	}
 
 	wrap(){

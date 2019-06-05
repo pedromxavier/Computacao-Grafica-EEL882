@@ -3,10 +3,30 @@ var scene = new THREE.Scene();
 var width = window.innerWidth;
 var height = window.innerHeight;
 
-const NEAR = 0;
-const FAR = 10000;
+const NEAR = 1;
+const FAR = 20000;
+const FOV = 45;
 
-var camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, NEAR, FAR);
+
+var ORTHO = true;
+
+const CAM = 2;
+
+var ortho_camera = new THREE.OrthographicCamera( width/(-CAM), width/CAM, height/CAM, height/(-CAM), NEAR, FAR);
+
+var perps_camera = new THREE.PerspectiveCamera(FOV, width / height, NEAR, FAR);
+
+
+var camera;
+
+if(ORTHO){
+    camera = ortho_camera;
+} else{
+    camera = persp_camera;
+}
+
+var ambient_light = new THREE.AmbientLight(0xffffee, 0.05); // soft yellow light
+scene.add(ambient_light);
 
 var loader = new THREE.TextureLoader();
 
@@ -15,6 +35,11 @@ var raycaster = new THREE.Raycaster();
 var listener = new THREE.AudioListener();
 
 var renderer = new THREE.WebGLRenderer();
+//renderer.physicallyCorrectLights = true;
+renderer.gammaInput = true;
+renderer.gammaOutput = true;
+renderer.shadowMap.enabled = true;
+//renderer.toneMapping = THREE.ReinhardToneMapping;
 renderer.setSize(width, height);
 document.body.appendChild(renderer.domElement);
 
@@ -24,6 +49,10 @@ const RING_DIVS = 32;
 var INTERSECTED = null;
 var GRABBED     = null;
 var RGRABBED    = null;
+
+const PI = Math.PI;
+const TAU = 2*Math.PI;
+
 
 const audios = {
     universe : new Audio("../Trabalho3/audio/pavene.mp3")
@@ -93,8 +122,12 @@ const planets = {
 	pluto   : new Planet(universe,   2,   'pluto', Vec3(1160,0,0), false)
 };
 
+const stars = {
+    sun : new Star(universe, 500)
+};
+
 camera.position.x = 0;
 camera.position.y = 0;
-camera.position.z = 2000;
+camera.position.z = FAR/8;
 
 scene.add(camera);
