@@ -538,6 +538,8 @@ const FAR = 20000;
 const CAM = 2;
 var camera = new THREE.OrthographicCamera( width/(-CAM), width/CAM, height/CAM, height/(-CAM), NEAR, FAR);
 
+var ambient_light = new THREE.AmbientLight(0xffffee, 0.1); // soft yellow light
+scene.add(ambient_light);
 
 var loader = new THREE.TextureLoader();
 
