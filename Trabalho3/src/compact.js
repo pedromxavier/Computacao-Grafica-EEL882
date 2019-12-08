@@ -274,7 +274,7 @@ class Ring{
 
 		this.geometry = new THREE.TorusGeometry(this.r, this.width/2, 2, 2*RING_DIVS);
 
-		this.material = new THREE.MeshPhongMaterial({map: this.texture});
+		this.material = new THREE.MeshFaceMaterial({map: this.texture});
 		this.material.side = THREE.DoubleSide;
 
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
