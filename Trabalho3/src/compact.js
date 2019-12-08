@@ -258,13 +258,13 @@ class Ring{
 
 		this.texture.wrapS = THREE.MirroredRepeatWrapping //U
 		this.texture.wrapT = THREE.MirroredRepeatWrapping //V
-		this.texture.repeat.set(1, 2);
+		this.texture.repeat.set(2, 2);
 
 		this.cage_texture = cage_textures['rings'];
 
 		this.cage_texture.wrapS = THREE.MirroredRepeatWrapping //U
 		this.cage_texture.wrapT = THREE.MirroredRepeatWrapping //V
-		this.cage_texture.repeat.set(1, 20);
+		this.cage_texture.repeat.set(10, 2);
 
 		this.inner = inner;
 		this.outer = outer;
