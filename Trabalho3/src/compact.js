@@ -278,7 +278,7 @@ class Ring{
 		this.material.side = THREE.DoubleSide;
 
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.mesh.castShadow = true;
+        // this.mesh.castShadow = true;
         this.mesh.receiveShadow = true;
 
 		this.mesh.rotation.x = Math.PI/2;
