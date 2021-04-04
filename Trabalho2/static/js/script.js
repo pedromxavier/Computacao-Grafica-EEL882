@@ -451,10 +451,10 @@ function set_mode(_mode_) {
 function toggle_debug_mode(img){
   if(debug_mode){
     debug_mode = false;
-    document.getElementById("debug_img").src = "images/debug2.png";
+    document.getElementById("debug_img").src = "./static/images/debug2.png";
   } else{
     debug_mode = true;
-    document.getElementById("debug_img").src = "images/debug.png";
+    document.getElementById("debug_img").src = "./static/images/debug.png";
   }
 }
 
